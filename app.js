@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config()
 
 const USER = require('./Schema').USER;
+const EXERCISE = require('./Schema').EXERCISE;
 
 const app = express();
 
@@ -77,7 +78,7 @@ app.post('/api/exercise/new-user', (req, res) => {
     
 })
 
-
+// get all users that has been created in the database in this url "api/exercise/users"
 app.get('/api/exercise/users', (req, res) => {
     USER.find((err, users) => {
         if ( err ) res.send(err)
