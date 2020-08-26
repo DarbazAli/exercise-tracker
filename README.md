@@ -10,6 +10,7 @@ Building a Full-Stack app to track user's exercises
 - [x] Create New User Form
 - [x] Setup POST router to new USer
 - [x] Put New User to database
+- [x] Get full list of registerd users
 
 **New Exercise**
 - [ ] Create a Model for Exercise

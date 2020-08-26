@@ -76,3 +76,11 @@ app.post('/api/exercise/new-user', (req, res) => {
     
     
 })
+
+
+app.get('/api/exercise/users', (req, res) => {
+    USER.find((err, users) => {
+        if ( err ) res.send(err)
+        res.json(users)
+    })
+})
