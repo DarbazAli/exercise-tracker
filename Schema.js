@@ -20,7 +20,7 @@ const exerciseSchema = new Schema({
     username: String,
     description: String,
     duration: Number,
-    date: Date,
+    date: String,
 })
 // CREATE EXERCISE MODEL AND EXPORT
 exports.USER = USER;

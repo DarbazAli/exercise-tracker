@@ -86,18 +86,6 @@ app.get('/api/exercise/users', (req, res) => {
     })
 })
 
-// retrive all exercise by id
-app.get('/api/exercise/log', (req, res) => {
-    let userID = req.query.user_id;
-    // console.log(userID);
-    EXERCISE.find({userid: userID}, (err, data) => {
-        res.json(data)
-    })
-
-    // EXERCISE.find((err, data) => {
-    //     res.json(data)
-    // })
-})
 
 
 /*======================================================================= 
@@ -107,12 +95,10 @@ app.get('/api/exercise/log', (req, res) => {
 app.post('/api/exercise/add', (req, res) => {
     let { userid, description, duration, date } = req.body;
 
-    if ( !date ) {
-        date = new Date();
-    }
+    const event = !date ? new Date().toDateString() :
+        new Date(date).toDateString();
 
     // search for username based on provided userid
-
     USER.find({_id: userid}, (err, user) => {
         if (err) res.send(err)
         // return user.username;
@@ -120,7 +106,7 @@ app.post('/api/exercise/add', (req, res) => {
         const exercise = new EXERCISE({
             userid: userid,
             username: username,
-            date: date,
+            date: event,
             duration: duration,
             description: description
         })
@@ -138,20 +124,15 @@ app.post('/api/exercise/add', (req, res) => {
     
     })
    
-    
-    
-
-    
-
-    /* 
-        "_id": "5f461f08ad2edf00314b4692",
-        "username": "darbazali",
-        "date": "Fri May 01 2020",
-        "duration": 44,
-        "description": "bullshit"
-    */
-    
-    
 
 })
 
+
+// retrive all exercise by id
+app.get('/api/exercise/log', (req, res) => {
+    let userID = req.query.user_id;
+    // console.log(userID);
+    EXERCISE.find({userid: userID}, (err, data) => {
+        res.json(data)
+    })
+})
