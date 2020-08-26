@@ -100,27 +100,38 @@ app.post('/api/exercise/add', (req, res) => {
 
     // search for username based on provided userid
     USER.find({_id: userid}, (err, user) => {
+        // handle error
         if (err) res.send(err)
-        // return user.username;
-        const username = user[0].username;
-        const exercise = new EXERCISE({
-            userid: userid,
-            username: username,
-            date: event,
-            duration: duration,
-            description: description
-        })
-    
-        exercise.save((err, data) => {
-            if ( err ) res.send(err);
-            res.json({
-                _id: data._id,
-                username: data.username,
-                data: data.date,
-                duration: data.duration,
-                description: data.description
+
+        // handle not found
+        // if ( !user.length ) {
+        //     res.send('User ID not found!')
+        // } 
+        
+        // handle no error
+        // create exercise, save to db
+        else {
+            const username = user[0].username;
+            const exercise = new EXERCISE({
+                userid: userid,
+                username: username,
+                date: event,
+                duration: duration,
+                description: description
             })
-        })
+
+            exercise.save((err, data) => {
+                if ( err ) res.send(err);
+                res.json({
+                    _id: data._id,
+                    username: data.username,
+                    data: data.date,
+                    duration: data.duration,
+                    description: data.description
+                })
+            })
+        }
+        
     
     })
    
@@ -130,9 +141,20 @@ app.post('/api/exercise/add', (req, res) => {
 
 // retrive all exercise by id
 app.get('/api/exercise/log', (req, res) => {
-    let userID = req.query.user_id;
-    // console.log(userID);
-    EXERCISE.find({userid: userID}, (err, data) => {
-        res.json(data)
-    })
+    // check if userid param is enterd
+    if ( !req.query.user_id ) {
+        res.send('Unknown userID');
+    } 
+
+    // look for optinal params
+    // else continue
+    else {
+        const userID = req.query.user_id;
+        EXERCISE.find({userid: userID}, (err, data) => {
+            if ( !data.length ) {
+                res.send('User ID not found!')
+            } 
+            res.json(data)
+        })
+    }
 })
