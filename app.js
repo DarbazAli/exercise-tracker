@@ -10,7 +10,7 @@ const EXERCISE = require('./Schema').EXERCISE;
 const app = express();
 
 app.listen(3000, () => console.log("Listening on 3000"))
-
+console.clear();
 // setup template engine
 app.set('views', './views');
 app.set('view engine', 'pug');
@@ -45,7 +45,7 @@ app.post('/api/exercise/new-user', (req, res) => {
     const username = req.body.username;
 
     // check if username already exist
-    const isExist = USER.count({username: username}, (err, count) => {
+    const isExist = USER.countDocuments({username: username}, (err, count) => {
         if ( err ) res.send(err)
         // if user is exist, then set status to 401, and redirect to the form
         if ( count > 0 ) {
@@ -106,7 +106,7 @@ app.post('/api/exercise/add', (req, res) => {
         // handle not found
         // if ( !user.length ) {
         //     res.send('User ID not found!')
-        // } 
+        // }  
         
         // handle no error
         // create exercise, save to db
@@ -148,17 +148,6 @@ app.get('/api/exercise/log', (req, res) => {
         res.send('Unknown userID');
     } 
 
-
-    else {
-        // look for optional parameters
-        if ( from && to ) {
-            EXERCISE.find({userid: userID, date: {"$gte": from, "$lt": to}}, (err, data) => {
-                if ( !data.length ) {
-                    res.send('User ID not found!')
-                } 
-                res.json(data)
-            }).limit(parseInt(limit) || null)
-        }
     
         else {
             EXERCISE.find({userid: userID}, (err, data) => {
@@ -168,5 +157,5 @@ app.get('/api/exercise/log', (req, res) => {
                 res.json(data)
             }).limit(parseInt(limit) || null)
         }
-    }
+    
 })
