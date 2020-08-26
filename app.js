@@ -94,62 +94,62 @@ app.get('/api/exercise/users', (req, res) => {
 =======================================================================*/
 
 app.post('/api/exercise/add', (req, res) => {
-    let { userid, description, duration, date } = req.body;
+    let { userId, description, duration, date } = req.body;
 
     const event = !date ? new Date().toDateString() :
         new Date(date).toDateString();
 
     // search for username based on provided userid
 
-    if ( !userid || !description || !duration ) {
+    if ( !userId || !description || !duration ) {
         res.send("userid, Description, and Duration fields are required!")
     }
 
     const exerciseInstance = {
         description: description,
-        duration: duration,
+        duration: parseInt(duration),
         date: event
     }
     // find user in db and update
     USER.findByIdAndUpdate(
-        userid,
+        userId,
         {$push: { exercise: exerciseInstance}},
         (err, doc) => {
             if ( err ) return console.log(err)
             res.json({
+                
                 username: doc.username,
-                // description: doc.description,
-                // duration: doc.duration,
+                description: description,
+                duration: parseInt(duration),
                 _id: doc._id,
-                // date: doc.data
-                exercise: exerciseInstance
+                date: event,
+                
+                
             })
         }
     )
-   
-   
-
 })
 
 
 // retrive all exercise by id
 app.get('/api/exercise/log', (req, res) => {
     // extract parameters
-    const {userID, limit, from, to } = req.query;
+    const {userId, limit, from, to } = req.query;
     // check if userid param is enterd
-    if ( !userID ) {
+    if ( !userId ) {
         res.send('Unknown userID');
     } 
 
     else {
-        USER.find({_id: userID}, (err, data) => {
+      
+        USER.find({_id: userId}, (err, data) => {
             const user = data[0]
             res.json({
                 _id: user._id,
                 username: user.username,
                 count: user.exercise.length,
                 log: user.exercise
-            })
+            }).limit(parseInt(limit) || null)
         })
     }
     
