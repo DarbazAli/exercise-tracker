@@ -2,10 +2,11 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors');
+const { json } = require('body-parser');
 require('dotenv').config()
 
 const USER = require('./Schema').USER;
-const EXERCISE = require('./Schema').EXERCISE;
+// const EXERCISE = require('./Schema').EXERCISE;
 
 const app = express();
 
@@ -99,52 +100,33 @@ app.post('/api/exercise/add', (req, res) => {
         new Date(date).toDateString();
 
     // search for username based on provided userid
-    USER.find({_id: userid}, (err, user) => {
-        // handle error
-        if (err) res.send(err)
 
-        // handle not found
-        // if ( !user.length ) {
-        //     res.send('User ID not found!')
-        // }  
+    if ( !userid || !description || !duration ) {
+        res.send("userid, Description, and Duration fields are required!")
+    }
 
-        /* 
-            const expected = {
-            username: 'fcc_test_1596648410971', // Obviously the numbers change
-            description: 'test',
-            duration: 60,
-            _id: 5f29cd9e782d5f13d127b456, // Must be of type 'ObjectId'
-            date: 'Mon Jan 01 1990'
-}
-        */
-        
-        // handle no error
-        // create exercise, save to db
-        else {
-            const username = user[0].username;
-            const exercise = new EXERCISE({
-                
-                username: username,
-                duration: duration,
-                description: description,
-                userid: userid,
-                date: event
-            })
-
-            exercise.save((err, data) => {
-                if ( err ) res.send(err);
-                res.json({
-                    username: data.username,
-                    duration: data.duration,
-                    description: data.description,
-                    userid: data._id,
-                    data: data.date
-                })
+    const exerciseInstance = {
+        description: description,
+        duration: duration,
+        date: event
+    }
+    // find user in db and update
+    USER.findByIdAndUpdate(
+        userid,
+        {$push: { exercise: exerciseInstance}},
+        (err, doc) => {
+            if ( err ) return console.log(err)
+            res.json({
+                username: doc.username,
+                // description: doc.description,
+                // duration: doc.duration,
+                _id: doc._id,
+                // date: doc.data
+                exercise: exerciseInstance
             })
         }
-        
-    
-    })
+    )
+   
    
 
 })
@@ -159,14 +141,16 @@ app.get('/api/exercise/log', (req, res) => {
         res.send('Unknown userID');
     } 
 
-    
-        else {
-            EXERCISE.find({userid: userID}, (err, data) => {
-                if ( !data.length ) {
-                    res.send('User ID not found!')
-                } 
-                res.json(data)
-            }).limit(parseInt(limit) || null)
-        }
+    else {
+        USER.find({_id: userID}, (err, data) => {
+            const user = data[0]
+            res.json({
+                _id: user._id,
+                username: user.username,
+                count: user.exercise.length,
+                log: user.exercise
+            })
+        })
+    }
     
 })
