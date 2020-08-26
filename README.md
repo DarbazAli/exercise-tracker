@@ -14,6 +14,6 @@ Building a Full-Stack app to track user's exercises
 
 **New Exercise**
 - [ ] Create a Model for Exercise
-- [ ] Create New Exercise Form
+- [x] Create New Exercise Form
 - [ ] Seup POST router to add new Exercise
 - [ ] Put New Exercise to database
