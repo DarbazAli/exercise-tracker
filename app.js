@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors');
 require('dotenv').config()
 
+const USER = require('./Schema').USER;
+
 const app = express();
 
 app.listen(3000, () => console.log("Listening on 3000"))
@@ -14,10 +16,13 @@ app.set('view engine', 'pug');
 
 // serve static files
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json())
+app.use(cors())
 
 // create the home url
 app.get('/', (req, res) => {
-    res.render('index', {title: 'Home', message: "Hello There"})
+    res.render('index', {title: 'Home'})
 })
 
 app.get('/about', (req, res) => {
@@ -31,3 +36,43 @@ app.get('/about', (req, res) => {
      useUnifiedTopology: true,
      serverSelectionTimeoutMS: 5000
  })
+
+
+
+//  Setup POST Route to new user
+app.post('/api/exercise/new-user', (req, res) => {
+    const username = req.body.username;
+
+    // check if username already exist
+    const isExist = USER.count({username: username}, (err, count) => {
+        if ( err ) res.send(err)
+        // if user is exist, then set status to 401, and redirect to the form
+        if ( count > 0 ) {
+            res.status(401).render('index', {message: "User already exist!"})
+        }
+
+        /*  if user is new, then create a new username based on provided 
+            username from the form, and save it to database
+        */
+        else {
+            // create new user
+            const newUser = new USER({
+                username: username
+            })
+
+            // save to database
+            newUser.save((err, user) => {
+                if (err) res.send(err)
+                res.json({
+                    "username": user.username,
+                    "_id": user._id
+                })
+            })
+        } 
+        
+
+    });
+
+    
+    
+})

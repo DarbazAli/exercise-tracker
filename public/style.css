@@ -5,3 +5,7 @@ body {
 h1 {
     font-weight: 700;
 }
+
+.error {
+    color: rgb(199, 62, 53);
+}
