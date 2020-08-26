@@ -86,6 +86,19 @@ app.get('/api/exercise/users', (req, res) => {
     })
 })
 
+// retrive all exercise by id
+app.get('/api/exercise/log', (req, res) => {
+    let userID = req.query.user_id;
+    // console.log(userID);
+    EXERCISE.find({userid: userID}, (err, data) => {
+        res.json(data)
+    })
+
+    // EXERCISE.find((err, data) => {
+    //     res.json(data)
+    // })
+})
+
 
 /*======================================================================= 
     SETUP POST ROUTER TO ADD NEW EXERCISE
@@ -98,6 +111,38 @@ app.post('/api/exercise/add', (req, res) => {
         date = new Date();
     }
 
+    // search for username based on provided userid
+
+    USER.find({_id: userid}, (err, user) => {
+        if (err) res.send(err)
+        // return user.username;
+        const username = user[0].username;
+        const exercise = new EXERCISE({
+            userid: userid,
+            username: username,
+            date: date,
+            duration: duration,
+            description: description
+        })
+    
+        exercise.save((err, data) => {
+            if ( err ) res.send(err);
+            res.json({
+                _id: data._id,
+                username: data.username,
+                data: data.date,
+                duration: data.duration,
+                description: data.description
+            })
+        })
+    
+    })
+   
+    
+    
+
+    
+
     /* 
         "_id": "5f461f08ad2edf00314b4692",
         "username": "darbazali",
@@ -106,39 +151,7 @@ app.post('/api/exercise/add', (req, res) => {
         "description": "bullshit"
     */
     
-    // create new exercise
-    const exercise = new EXERCISE({
-        userid: userid,
-        description: description,
-        duration: duration,
-        date: date,
-        addedBy: userid
-    })
-    // select
-    // res.json(exercise)
-    // save the exercise
-    // exercise.save(err => {
-    //     if (!err) {
-    //         EXERCISE.find({})
-    //         .populate('postedBy')
-    //         .exec(function(error, posts) {
-    //             console.log(JSON.stringify(posts, null, "\t"))
-    //         })
-    //     }
-    // })
-
-    exercise.save((err, data) => {
-        if ( err ) res.send(err);
-        res.json(data)
-    })
+    
 
 })
 
-// retrive all exercise by id
-app.get('/api/exercise/log?user_id', (req, res) => {
-    let userID = req.query.use_id;
-
-    EXERCISE.find({userid: userID}, (err, data) => {
-        res.json(data)
-    })
-})
