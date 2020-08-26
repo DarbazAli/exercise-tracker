@@ -107,27 +107,38 @@ app.post('/api/exercise/add', (req, res) => {
         // if ( !user.length ) {
         //     res.send('User ID not found!')
         // }  
+
+        /* 
+            const expected = {
+            username: 'fcc_test_1596648410971', // Obviously the numbers change
+            description: 'test',
+            duration: 60,
+            _id: 5f29cd9e782d5f13d127b456, // Must be of type 'ObjectId'
+            date: 'Mon Jan 01 1990'
+}
+        */
         
         // handle no error
         // create exercise, save to db
         else {
             const username = user[0].username;
             const exercise = new EXERCISE({
-                userid: userid,
+                
                 username: username,
-                date: event,
                 duration: duration,
-                description: description
+                description: description,
+                userid: userid,
+                date: event
             })
 
             exercise.save((err, data) => {
                 if ( err ) res.send(err);
                 res.json({
-                    _id: data._id,
                     username: data.username,
-                    data: data.date,
                     duration: data.duration,
-                    description: data.description
+                    description: data.description,
+                    userid: data._id,
+                    data: data.date
                 })
             })
         }

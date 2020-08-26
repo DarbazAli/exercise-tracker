@@ -13,14 +13,15 @@ const USER = mongoose.model('USER', userSchema);
 
 /* =========== EXERCISE SCHEMA AND MODEL =========== */
 const exerciseSchema = new Schema({
-    userid: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'USER'
-    },
+    
     username: String,
     description: String,
     duration: Number,
-    date: String,
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'USER'
+    },
+    date: String
 })
 // CREATE EXERCISE MODEL AND EXPORT
 exports.USER = USER;
