@@ -97,6 +97,14 @@ app.post('/api/exercise/add', (req, res) => {
     if ( !date ) {
         date = new Date();
     }
+
+    /* 
+        "_id": "5f461f08ad2edf00314b4692",
+        "username": "darbazali",
+        "date": "Fri May 01 2020",
+        "duration": 44,
+        "description": "bullshit"
+    */
     
     // create new exercise
     const exercise = new EXERCISE({
@@ -124,4 +132,13 @@ app.post('/api/exercise/add', (req, res) => {
         res.json(data)
     })
 
+})
+
+// retrive all exercise by id
+app.get('/api/exercise/log?user_id', (req, res) => {
+    let userID = req.query.use_id;
+
+    EXERCISE.find({userid: userID}, (err, data) => {
+        res.json(data)
+    })
 })
