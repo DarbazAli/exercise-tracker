@@ -19,3 +19,11 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
     res.render('about')
 })
+
+ /*============= 1. Create a MongoDB database and connect . ===========*/
+ const MONGO_URL = process.env.MONGO_URL_LOCAL;
+ mongoose.connect(MONGO_URL, {
+     useNewUrlParser: true,
+     useUnifiedTopology: true,
+     serverSelectionTimeoutMS: 5000
+ })

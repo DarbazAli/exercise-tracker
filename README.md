@@ -5,8 +5,8 @@ Building a Full-Stack app to track user's exercises
 ### Tasks
 **New User**
 - [x] Install required packages
-- [ ] Create a Model for User
-- [ ] Connect to db
+- [x] Create a Model for User
+- [x] Connect to db
 - [ ] Create New User Form
 - [ ] Setup POST router to new USer
 - [ ] Put New User to database
