@@ -141,24 +141,32 @@ app.post('/api/exercise/add', (req, res) => {
 
 // retrive all exercise by id
 app.get('/api/exercise/log', (req, res) => {
-
     // extract parameters
-    // const {userID, limit, from, to } = req.query;
+    const {userID, limit, from, to } = req.query;
     // check if userid param is enterd
-    if ( !req.query.user_id ) {
+    if ( !userID ) {
         res.send('Unknown userID');
     } 
-    
-    // look for optinal params
-    // else continue
+
+
     else {
-        const limit = parseInt(req.query.limit) || null;
-        const userID = req.query.user_id;
-        EXERCISE.find({userid: userID}, (err, data) => {
-            if ( !data.length ) {
-                res.send('User ID not found!')
-            } 
-            res.json(data)
-        }).limit(limit)
+        // look for optional parameters
+        if ( from && to ) {
+            EXERCISE.find({userid: userID, date: {"$gte": from, "$lt": to}}, (err, data) => {
+                if ( !data.length ) {
+                    res.send('User ID not found!')
+                } 
+                res.json(data)
+            }).limit(parseInt(limit) || null)
+        }
+    
+        else {
+            EXERCISE.find({userid: userID}, (err, data) => {
+                if ( !data.length ) {
+                    res.send('User ID not found!')
+                } 
+                res.json(data)
+            }).limit(parseInt(limit) || null)
+        }
     }
 })
