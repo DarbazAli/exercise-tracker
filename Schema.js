@@ -7,7 +7,7 @@ const userSchema = new Schema({
     username: String,
 })
 // CREATE USER MODEL AND EXPORT
-exports.USER = mongoose.model('USER', userSchema);
+const USER = mongoose.model('USER', userSchema);
 
 
 
@@ -16,8 +16,13 @@ const exerciseSchema = new Schema({
     userid: String,
     description: String,
     duration: Number,
-    date: Date
+    date: Date,
+    addedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'USER'
+    }
 })
 // CREATE EXERCISE MODEL AND EXPORT
+exports.USER = USER;
 exports.EXERCISE = mongoose.model('EXERCISE', exerciseSchema);
 

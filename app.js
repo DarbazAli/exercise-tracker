@@ -85,3 +85,43 @@ app.get('/api/exercise/users', (req, res) => {
         res.json(users)
     })
 })
+
+
+/*======================================================================= 
+    SETUP POST ROUTER TO ADD NEW EXERCISE
+=======================================================================*/
+
+app.post('/api/exercise/add', (req, res) => {
+    let { userid, description, duration, date } = req.body;
+
+    if ( !date ) {
+        date = new Date();
+    }
+    
+    // create new exercise
+    const exercise = new EXERCISE({
+        userid: userid,
+        description: description,
+        duration: duration,
+        date: date,
+        addedBy: userid
+    })
+    // select
+    // res.json(exercise)
+    // save the exercise
+    // exercise.save(err => {
+    //     if (!err) {
+    //         EXERCISE.find({})
+    //         .populate('postedBy')
+    //         .exec(function(error, posts) {
+    //             console.log(JSON.stringify(posts, null, "\t"))
+    //         })
+    //     }
+    // })
+
+    exercise.save((err, data) => {
+        if ( err ) res.send(err);
+        res.json(data)
+    })
+
+})
