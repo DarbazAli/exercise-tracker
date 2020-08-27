@@ -115,7 +115,7 @@ app.post('/api/exercise/add', (req, res) => {
         userId,
         {$push: { exercise: exerciseInstance}},
         (err, doc) => {
-            if ( err ) return console.log(err)
+            if ( err ) res.send(err)
             res.json({
                 
                 username: doc.username,
@@ -134,23 +134,46 @@ app.post('/api/exercise/add', (req, res) => {
 // retrive all exercise by id
 app.get('/api/exercise/log', (req, res) => {
     // extract parameters
-    const {userId, limit, from, to } = req.query;
-    // check if userid param is enterd
+    let {userId, limit, from, to } = req.query;
+   
+    // // check if userid param is enterd
     if ( !userId ) {
         res.send('Unknown userID');
     } 
 
-    else {
+    let log = [];
+    USER.findOne({_id: userId}, (err, data) => {
+
+      if (err) {
+        res.send(err);
+      }
+
+      log = data.exercise.slice();
+
+      if (from && !to) {
+        log = log.filter(item => new Date(item.date).getTime() > new Date(from).getTime());
+      } 
       
-        USER.find({_id: userId}, (err, data) => {
-            const user = data[0]
-            res.json({
-                _id: user._id,
-                username: user.username,
-                count: user.exercise.length,
-                log: user.exercise
-            }).limit(parseInt(limit) || null)
-        })
-    }
+      else if (!from && to) {
+        log = log.filter(item => new Date(item.date).getTime() < new Date(to).getTime());
+      } 
+      
+      else if (from && to) {
+        log = log.filter(item => new Date(item.date).getTime() > new Date(from).getTime() 
+                      && new Date(item.date).getTime() < new Date(to).getTime());
+      }
+      if (limit) {
+        log = log.slice(0, limit);
+      }
+      res.send({
+
+          _id: data._id,
+          username: data.username,
+          count: data.exercise.length,
+          log: log
+      })
+    })
     
 })
+
+
